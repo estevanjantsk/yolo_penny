@@ -37,5 +37,17 @@ jobs:
       - name: Compiles without warnings
         run: mix compile --warnings-as-errors
 
+      - name: Run formatter
+        run: mix format --check-formatted
+
+      - name: Run Credo
+        run: mix credo --strict
+
+      - name: Run Dialyzer
+        run: mix dialyzer
+
+      - name: Run Sobelow
+        run: mix sobelow --config
+
       - name: Run tests
         run: mix test
