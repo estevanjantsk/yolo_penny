@@ -1,4 +1,4 @@
-name: Check Format
+name: Elixir CI
 
 on:
   pull_request:
@@ -11,8 +11,9 @@ permissions:
   contents: read
 
 jobs:
-  check_format:
+  test:
     runs-on: ubuntu-latest
+    name: Test on OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
     strategy:
       matrix:
         elixir: [1.16.1]
