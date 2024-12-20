@@ -1,8 +1,8 @@
 defmodule YoloPennyWeb.UserAuthTest do
   use YoloPennyWeb.ConnCase, async: true
 
-  alias YoloPennyWeb.UserAuth
   alias Phoenix.LiveView
+  alias YoloPennyWeb.UserAuth
 
   import YoloPenny.AccountsFixtures
 

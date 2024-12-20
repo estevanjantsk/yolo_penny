@@ -40,6 +40,6 @@ defmodule YoloPenny.Users.UserServerTest do
 
     users = UserServer.list_users()
 
-    assert Enum.count(users) == 0
+    assert Enum.empty?(users) == true
   end
 end

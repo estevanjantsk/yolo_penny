@@ -1,4 +1,8 @@
 defmodule YoloPennyWeb.UserAuth do
+  @moduledoc """
+  This module provides functions for managing user authentication.
+  """
+
   use YoloPennyWeb, :verified_routes
 
   import Plug.Conn

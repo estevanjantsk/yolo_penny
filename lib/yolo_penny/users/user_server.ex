@@ -1,4 +1,8 @@
 defmodule YoloPenny.Users.UserServer do
+  @moduledoc """
+  This module provides a GenServer for managing users.
+  """
+
   use GenServer
 
   # Client API
