@@ -10,7 +10,12 @@ defmodule YoloPenny.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      test_coverage: [summary: [threshold: 85], ignore_modules: coverage_ignore_modules()]
+      test_coverage: [summary: [threshold: 85], ignore_modules: coverage_ignore_modules()],
+      # CI
+      dialyzer: [
+        plt_add_apps: [:ex_unit, :mix],
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
+      ]
     ]
   end
 
