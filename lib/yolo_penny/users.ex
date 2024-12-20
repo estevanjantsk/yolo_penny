@@ -3,8 +3,8 @@ defmodule YoloPenny.Users do
   This module provides functions for managing users.
   Users API.
   """
-  alias YoloPenny.Users.Registration
   alias YoloPenny.Users.UserServer
+  alias YoloPenny.Users.Registration
 
   def add_user(username) do
     UserServer.add_user(username)
@@ -14,7 +14,7 @@ defmodule YoloPenny.Users do
     UserServer.find_user(username)
   end
 
-  def clean_users() do
+  def clean_users do
     UserServer.clean()
   end
 
