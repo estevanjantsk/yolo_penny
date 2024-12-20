@@ -1,16 +1,19 @@
 defmodule YoloPennyWeb.UserAuthTest do
-  use YoloPennyWeb.ConnCase, async: true
+  use YoloPennyWeb.ConnCase
 
+  alias YoloPenny.Users
   alias Phoenix.LiveView
   alias YoloPennyWeb.UserAuth
 
   import YoloPenny.AccountsFixtures
 
   setup %{conn: conn} do
+    Users.clean_users()
+
     conn =
       conn |> init_test_session(%{})
 
-    {:ok, user} = user_fixture()
+    user = user_fixture()
 
     %{user: user, conn: conn}
   end
@@ -18,7 +21,7 @@ defmodule YoloPennyWeb.UserAuthTest do
   test "log_in_user/2 logs in a user", %{conn: conn, user: user} do
     conn = UserAuth.log_in_user(conn, user)
 
-    assert get_session(conn, :current_user) == %{id: 1, username: "tester"}
+    assert get_session(conn, :current_user) == %{id: user.id, username: user.username}
   end
 
   test "log_out_user/1 logs out a user", %{conn: conn, user: user} do
@@ -34,7 +37,7 @@ defmodule YoloPennyWeb.UserAuthTest do
 
     conn = UserAuth.fetch_current_user(conn, %{})
 
-    assert conn.assigns.current_user == %{id: 1, username: "tester"}
+    assert conn.assigns.current_user == %{id: user.id, username: user.username}
   end
 
   describe "on_mount/4 :ensure_authenticated" do
@@ -45,7 +48,7 @@ defmodule YoloPennyWeb.UserAuthTest do
 
       {:cont, socket} = UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{})
 
-      assert socket.assigns.current_user == %{id: 1, username: "tester"}
+      assert socket.assigns.current_user == %{id: user.id, username: user.username}
     end
 
     test "on_mount/4 redirects if a user is not authenticated", %{conn: conn} do

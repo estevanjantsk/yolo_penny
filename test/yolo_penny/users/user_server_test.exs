@@ -1,5 +1,5 @@
 defmodule YoloPenny.Users.UserServerTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
 
   alias YoloPenny.Users.UserServer
 
