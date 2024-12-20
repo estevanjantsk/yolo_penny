@@ -9,7 +9,8 @@ defmodule YoloPenny.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [summary: [threshold: 85], ignore_modules: coverage_ignore_modules()]
     ]
   end
 
@@ -77,6 +78,18 @@ defmodule YoloPenny.MixProject do
         "esbuild yolo_penny --minify",
         "phx.digest"
       ]
+    ]
+  end
+
+  defp coverage_ignore_modules do
+    [
+      YoloPennyWeb.Layouts,
+      YoloPennyWeb.PageHTML,
+      YoloPennyWeb.CoreComponents,
+      YoloPennyWeb.ErrorHTML,
+      YoloPennyWeb.Router,
+      YoloPenny.Application,
+      YoloPennyWeb.Telemetry
     ]
   end
 end
