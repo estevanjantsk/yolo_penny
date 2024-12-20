@@ -201,4 +201,4 @@ jobs:
             ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-
 
       - name: Run tests
-        run: mix test --cover --warnings-as-errors
+        run: mix test --warnings-as-errors

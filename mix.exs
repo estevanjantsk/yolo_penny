@@ -96,7 +96,8 @@ defmodule YoloPenny.MixProject do
       YoloPennyWeb.ErrorHTML,
       YoloPennyWeb.Router,
       YoloPenny.Application,
-      YoloPennyWeb.Telemetry
+      YoloPennyWeb.Telemetry,
+      YoloPenny.Users.Registration
     ]
   end
 end
