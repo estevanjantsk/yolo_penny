@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   compile:
-    name: Install dependencies and compile)
+    name: Install dependencies and compile
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
