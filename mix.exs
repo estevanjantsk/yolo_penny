@@ -9,7 +9,13 @@ defmodule YoloPenny.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [summary: [threshold: 85], ignore_modules: coverage_ignore_modules()],
+      # CI
+      dialyzer: [
+        plt_add_apps: [:ex_unit, :mix],
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
+      ]
     ]
   end
 
@@ -54,7 +60,10 @@ defmodule YoloPenny.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.2"}
+      {:bandit, "~> 1.2"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -74,6 +83,18 @@ defmodule YoloPenny.MixProject do
         "esbuild yolo_penny --minify",
         "phx.digest"
       ]
+    ]
+  end
+
+  defp coverage_ignore_modules do
+    [
+      YoloPennyWeb.Layouts,
+      YoloPennyWeb.PageHTML,
+      YoloPennyWeb.CoreComponents,
+      YoloPennyWeb.ErrorHTML,
+      YoloPennyWeb.Router,
+      YoloPenny.Application,
+      YoloPennyWeb.Telemetry
     ]
   end
 end

@@ -1,0 +1,204 @@
+name: Elixir CI
+
+on:
+  pull_request:
+    branches: ["main"]
+
+env:
+  MIX_ENV: test
+  ELIXIR: 1.16.1
+  OTP: 26
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    name: Install dependencies and compile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: setup-beam
+        name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{env.OTP}}
+          elixir-version: ${{env.ELIXIR}}
+      
+      - name: Restore dependencies cache
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-${{ github.sha }}
+          path: |
+            _build
+            deps
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-
+
+      - name: Install Mix Dependencies
+        run: mix deps.get
+
+      - name: Compiles without warnings
+        run: mix compile --warnings-as-errors
+
+      - name: Save dependencies cache
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-${{ github.sha }}
+          path: |
+            _build
+            deps
+  format:
+    needs: compile
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: setup-beam
+        name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{env.OTP}}
+          elixir-version: ${{env.ELIXIR}}
+
+      - name: Restore dependencies cache
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-${{ github.sha }}
+          path: |
+            _build
+            deps
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-
+
+      - name: Check Elixir formatting
+        run: mix format --check-formatted
+  credo:
+    needs: compile
+    name: Credo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: setup-beam
+        name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{env.OTP}}
+          elixir-version: ${{env.ELIXIR}}
+
+      - name: Restore dependencies cache
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-${{ github.sha }}
+          path: |
+            _build
+            deps
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-
+
+      - name: Check code style
+        run: mix credo --strict
+  dialyzer:
+    needs: compile
+    name: Dialyzer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: setup-beam
+        name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{env.OTP}}
+          elixir-version: ${{env.ELIXIR}}
+
+      - name: Restore dependencies cache
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-${{ github.sha }}
+          path: |
+            _build
+            deps
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-
+      
+      - name: Restore PLT cache
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-plt-${{ github.sha }}
+          path: priv/plts
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-plt-
+
+      - name: Create PLTs
+        run: mix dialyzer --plt
+
+      - name: Run dialyzer
+        run: mix dialyzer
+
+      - name: Save PLT cache
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-plt-${{ github.sha }}
+          path: priv/plts
+  sobelow:
+    needs: compile
+    name: Sobelow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: setup-beam
+        name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{env.OTP}}
+          elixir-version: ${{env.ELIXIR}}
+
+      - name: Restore dependencies cache
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-${{ github.sha }}
+          path: |
+            _build
+            deps
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-
+
+      - name: Check for security issues using sobelow
+        run: mix sobelow --config
+  test:
+    needs: compile
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: setup-beam
+        name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{env.OTP}}
+          elixir-version: ${{env.ELIXIR}}
+
+      - name: Restore dependencies cache
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-${{ github.sha }}
+          path: |
+            _build
+            deps
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ steps.setup-beam.outputs.otp-version }}-mix-
+
+      - name: Run tests
+        run: mix sobelow --config
