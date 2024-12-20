@@ -49,7 +49,7 @@ defmodule YoloPenny.Users.UserServer do
       user = %{username: username}
       new_users = Map.put(users, id, user)
       new_state = %{state | users: new_users}
-      {:reply, {:ok, user}, new_state}
+      {:reply, {:ok, %{id: id, username: user.username}}, new_state}
     end
   end
 
