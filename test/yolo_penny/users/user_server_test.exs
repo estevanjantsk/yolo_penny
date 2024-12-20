@@ -11,7 +11,6 @@ defmodule YoloPenny.Users.UserServerTest do
   test "add_user/1 adds a user to the list" do
     {:ok, user} = UserServer.add_user("alice")
 
-    assert user.id == 1
     assert user.username == "alice"
   end
 
@@ -27,6 +26,15 @@ defmodule YoloPenny.Users.UserServerTest do
     users = UserServer.list_users()
 
     assert Enum.count(users) == 2
+  end
+
+  test "find_user/1 returns the user if it exists" do
+    UserServer.add_user("alice")
+    UserServer.add_user("bob")
+
+    {:ok, user} = UserServer.find_user("alice")
+
+    assert user.username == "alice"
   end
 
   test "clean/0 removes all users" do

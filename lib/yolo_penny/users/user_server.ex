@@ -3,6 +3,8 @@ defmodule YoloPenny.Users.UserServer do
   This module provides a GenServer for managing users.
   """
 
+  import Ecto.UUID, only: [generate: 0]
+
   use GenServer
 
   # Client API
@@ -15,6 +17,10 @@ defmodule YoloPenny.Users.UserServer do
   # Adds a user only if the username does not exist in the list
   def add_user(username) do
     GenServer.call(__MODULE__, {:add_user, username})
+  end
+
+  def find_user(username) do
+    GenServer.call(__MODULE__, {:find_user, username})
   end
 
   # Lists all users (for debugging purposes)
@@ -36,14 +42,22 @@ defmodule YoloPenny.Users.UserServer do
 
   # Handle the add_user request
   def handle_call({:add_user, username}, _from, %{users: users} = state) do
-    if Map.has_key?(users, username) do
+    if find_user_by_username(users, username) do
       {:reply, {:error, :user_exists}, state}
     else
-      id_counter = map_size(state.users) + 1
-      user = %{id: id_counter, username: username}
-      new_users = Map.put(users, username, user)
+      id = generate()
+      user = %{username: username}
+      new_users = Map.put(users, id, user)
       new_state = %{state | users: new_users}
       {:reply, {:ok, user}, new_state}
+    end
+  end
+
+  # Handle the find_user request
+  def handle_call({:find_user, username}, _from, %{users: users} = state) do
+    case find_user_by_username(users, username) do
+      nil -> {:reply, {:error, :user_not_found}, state}
+      user -> {:reply, {:ok, user}, state}
     end
   end
 
@@ -55,5 +69,12 @@ defmodule YoloPenny.Users.UserServer do
   # Handle clean request
   def handle_call(:clean, _from, _state) do
     {:reply, :ok, %{users: %{}}}
+  end
+
+  defp find_user_by_username(users, username) do
+    case Enum.find(users, fn {_id, user} -> user.username == username end) do
+      nil -> nil
+      {id, user} -> %{id: id, username: user.username}
+    end
   end
 end
