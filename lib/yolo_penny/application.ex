@@ -16,7 +16,8 @@ defmodule YoloPenny.Application do
       # Start a worker by calling: YoloPenny.Worker.start_link(arg)
       # {YoloPenny.Worker, arg},
       # Start to serve requests, typically the last entry
-      YoloPennyWeb.Endpoint
+      YoloPennyWeb.Endpoint,
+      {YoloPenny.Users.UserServer, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
