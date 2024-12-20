@@ -39,6 +39,7 @@ defmodule YoloPenny.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.11"},
+      {:phoenix_ecto, "~> 4.6"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.20.2"},
@@ -63,7 +64,8 @@ defmodule YoloPenny.MixProject do
       {:bandit, "~> 1.2"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -94,7 +96,8 @@ defmodule YoloPenny.MixProject do
       YoloPennyWeb.ErrorHTML,
       YoloPennyWeb.Router,
       YoloPenny.Application,
-      YoloPennyWeb.Telemetry
+      YoloPennyWeb.Telemetry,
+      YoloPenny.Users.Registration
     ]
   end
 end
