@@ -3,9 +3,9 @@ defmodule YoloPennyWeb.UserAuth do
 
   import Plug.Conn
 
-  def log_in_user(conn, username) do
+  def log_in_user(conn, user) do
     conn
-    |> put_session(:current_user, username)
+    |> put_session(:current_user, user)
   end
 
   def log_out_user(conn) do
