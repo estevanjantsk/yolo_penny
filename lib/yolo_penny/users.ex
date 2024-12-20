@@ -14,6 +14,10 @@ defmodule YoloPenny.Users do
     UserServer.find_user(username)
   end
 
+  def clean_users() do
+    UserServer.clean()
+  end
+
   def change_registration(%Registration{} = registration, attrs \\ %{}) do
     registration
     |> Registration.changeset(attrs)
