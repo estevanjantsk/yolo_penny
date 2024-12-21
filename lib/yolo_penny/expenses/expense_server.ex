@@ -19,6 +19,10 @@ defmodule YoloPenny.Expenses.ExpenseServer do
     GenServer.call(__MODULE__, {:get_expenses, user_id})
   end
 
+  def get_expense_by_id(user_id, expense_id) do
+    GenServer.call(__MODULE__, {:get_expense_by_id, user_id, expense_id})
+  end
+
   def delete_expense(user_id, expense_id) do
     GenServer.call(__MODULE__, {:delete_expense, user_id, expense_id})
   end
@@ -63,5 +67,12 @@ defmodule YoloPenny.Expenses.ExpenseServer do
 
   def handle_call(:clean, _from, _state) do
     {:reply, :ok, %{expenses: %{}}}
+  end
+
+  def handle_call({:get_expense_by_id, user_id, expense_id}, _from, %{expenses: expenses} = state) do
+    expenses = Map.get(expenses, user_id, [])
+    expense = Enum.find(expenses, fn expense -> expense.id == expense_id end)
+
+    {:reply, {:ok, expense}, state}
   end
 end

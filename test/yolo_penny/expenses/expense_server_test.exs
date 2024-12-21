@@ -31,4 +31,13 @@ defmodule YoloPenny.Expenses.ExpenseServerTest do
 
     assert expenses == [%{id: 2, amount: 200}]
   end
+
+  test "get_expense_by_id/2 returns the expense with the given id" do
+    {:ok, _} = ExpenseServer.add_expense("alice", %{id: 1, amount: 100})
+    {:ok, _} = ExpenseServer.add_expense("alice", %{id: 2, amount: 200})
+
+    {:ok, expense} = ExpenseServer.get_expense_by_id("alice", 1)
+
+    assert expense == %{id: 1, amount: 100}
+  end
 end
