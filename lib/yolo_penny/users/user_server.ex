@@ -36,8 +36,8 @@ defmodule YoloPenny.Users.UserServer do
   # Server Callbacks
 
   # Initialize the state as an empty map (keyed by `username`)
-  def init(initial_state) do
-    {:ok, initial_state}
+  def init(state) do
+    {:ok, state}
   end
 
   # Handle the add_user request
