@@ -5,6 +5,7 @@ defmodule YoloPenny.Expenses do
   """
 
   alias YoloPenny.Expenses.ExpenseServer
+  alias YoloPenny.Expenses.Expense
 
   def add_expense(user_id, expense), do: ExpenseServer.add_expense(user_id, expense)
 
@@ -14,4 +15,9 @@ defmodule YoloPenny.Expenses do
     do: ExpenseServer.delete_expense(user_id, expense_id)
 
   def clean_expenses, do: ExpenseServer.clean()
+
+  def change_expense(%Expense{} = expense, attrs \\ %{}) do
+    expense
+    |> Expense.changeset(attrs)
+  end
 end
