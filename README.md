@@ -67,6 +67,12 @@ Good luck! We look forward to seeing your solution.
 
 To start your Phoenix server:
 
+Since the solution does not require any database and should be straightforward I decided to not create a Docker/docker-compose to run the project. A simple mix setup mix phx.server should do the job.
+
+I used:
+  - `ELIXIR`: Set to `1.16.1`.
+  - `OTP`: Set to `26`.
+
   * Run `mix setup` to install and setup dependencies
   * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
