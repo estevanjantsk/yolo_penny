@@ -167,3 +167,7 @@ The GitHub Actions workflow I added is designed to automate the Continuous Integ
 ### Tests
 
 For the tests, I focused on the 80/20 rule, prioritizing the most critical areas. Specifically, I covered both GenServers (Users and Expenses), the entire user authentication process, and in LiveView, I tested a complete flow—from creating and listing an expense to deleting it.
+
+### Realtime
+
+You can test the real-time functionality by opening multiple tabs. When you create a new/delete expense, the list and total will automatically update across all tabs.
