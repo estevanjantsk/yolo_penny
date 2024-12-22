@@ -40,4 +40,13 @@ defmodule YoloPenny.Expenses.ExpenseServerTest do
 
     assert found_expense.id == expense.id
   end
+
+  test "get_total_by_user/1 returns the total amount of expenses for the user" do
+    {:ok, _} = ExpenseServer.add_expense("alice", %{amount: 100})
+    {:ok, _} = ExpenseServer.add_expense("alice", %{amount: 200})
+
+    {:ok, total} = ExpenseServer.get_total_by_user("alice")
+
+    assert total == 300
+  end
 end
