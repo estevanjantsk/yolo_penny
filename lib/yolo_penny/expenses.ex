@@ -4,8 +4,8 @@ defmodule YoloPenny.Expenses do
   Expenses API.
   """
 
-  alias YoloPenny.Expenses.ExpenseServer
   alias YoloPenny.Expenses.Expense
+  alias YoloPenny.Expenses.ExpenseServer
 
   def add_expense(user_id, expense), do: ExpenseServer.add_expense(user_id, expense)
 
