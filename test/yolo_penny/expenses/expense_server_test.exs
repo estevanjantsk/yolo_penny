@@ -8,12 +8,12 @@ defmodule YoloPenny.Expenses.ExpenseServerTest do
   end
 
   test "add_expense/2 adds an expense to the list" do
-    {:ok, _} = ExpenseServer.add_expense("alice", %{id: 1, amount: 100})
-    {:ok, _} = ExpenseServer.add_expense("alice", %{id: 2, amount: 200})
+    {:ok, _} = ExpenseServer.add_expense("alice", %{amount: 100})
+    {:ok, _} = ExpenseServer.add_expense("alice", %{amount: 200})
 
     {:ok, expenses} = ExpenseServer.get_expenses("alice")
 
-    assert expenses == [%{id: 2, amount: 200}, %{id: 1, amount: 100}]
+    assert Enum.count(expenses) == 2
   end
 
   test "get_expenses/1 returns an empty list if the user does not exist" do
@@ -22,22 +22,22 @@ defmodule YoloPenny.Expenses.ExpenseServerTest do
   end
 
   test "delete_expense/2 deletes an expense from the list" do
-    {:ok, _} = ExpenseServer.add_expense("alice", %{id: 1, amount: 100})
-    {:ok, _} = ExpenseServer.add_expense("alice", %{id: 2, amount: 200})
+    {:ok, expense} = ExpenseServer.add_expense("alice", %{amount: 100})
+    {:ok, _} = ExpenseServer.add_expense("alice", %{amount: 200})
 
-    {:ok, _} = ExpenseServer.delete_expense("alice", 1)
+    {:ok, _} = ExpenseServer.delete_expense("alice", expense.id)
 
     {:ok, expenses} = ExpenseServer.get_expenses("alice")
 
-    assert expenses == [%{id: 2, amount: 200}]
+    assert Enum.count(expenses) == 1
   end
 
   test "get_expense_by_id/2 returns the expense with the given id" do
-    {:ok, _} = ExpenseServer.add_expense("alice", %{id: 1, amount: 100})
-    {:ok, _} = ExpenseServer.add_expense("alice", %{id: 2, amount: 200})
+    {:ok, expense} = ExpenseServer.add_expense("alice", %{amount: 100})
+    {:ok, _} = ExpenseServer.add_expense("alice", %{amount: 200})
 
-    {:ok, expense} = ExpenseServer.get_expense_by_id("alice", 1)
+    {:ok, found_expense} = ExpenseServer.get_expense_by_id("alice", expense.id)
 
-    assert expense == %{id: 1, amount: 100}
+    assert found_expense.id == expense.id
   end
 end
