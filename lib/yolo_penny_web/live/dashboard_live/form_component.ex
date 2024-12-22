@@ -63,7 +63,7 @@ defmodule YoloPennyWeb.DashboardLive.FormComponent do
 
     case Ecto.Changeset.apply_action(changeset, :insert) do
       {:ok, data} ->
-        dbg(data)
+        Expenses.add_expense(socket.assigns.current_user.id, data)
 
         {:noreply,
          socket

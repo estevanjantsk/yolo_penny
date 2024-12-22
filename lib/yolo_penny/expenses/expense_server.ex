@@ -5,6 +5,8 @@ defmodule YoloPenny.Expenses.ExpenseServer do
 
   import Ecto.UUID, only: [generate: 0]
 
+  alias YoloPennyWeb.Endpoint
+
   use GenServer
 
   # Public API
@@ -40,19 +42,21 @@ defmodule YoloPenny.Expenses.ExpenseServer do
   end
 
   def handle_call({:add_expense, user_id, expense}, _from, %{expenses: expenses} = state) do
-    id = generate()
+    expense = Map.put(expense, :id, generate())
 
-    expense = %{expense | id: id}
+    dbg(expense)
 
     expense =
       case Map.get(expense, :date) do
-        nil -> Map.put(expense, :date, generate_date())
+        nil -> Map.put(expense, :date, Date.utc_today())
         _ -> expense
       end
 
     updated_expenses =
       expenses
       |> Map.update(user_id, [expense], fn existing -> [expense | existing] end)
+
+    Endpoint.broadcast("expenses_#{user_id}", "expense_created", expense)
 
     new_state = %{state | expenses: updated_expenses}
 
@@ -66,11 +70,15 @@ defmodule YoloPenny.Expenses.ExpenseServer do
   end
 
   def handle_call({:delete_expense, user_id, expense_id}, _from, %{expenses: expenses} = state) do
+    expense = get_expense_by_user(expenses, user_id, expense_id)
+
     updated_expenses =
       expenses
       |> Map.update(user_id, [], fn existing ->
         Enum.filter(existing, fn expense -> expense.id != expense_id end)
       end)
+
+    Endpoint.broadcast("expenses_#{user_id}", "expense_deleted", expense)
 
     new_state = %{state | expenses: updated_expenses}
 
@@ -82,14 +90,13 @@ defmodule YoloPenny.Expenses.ExpenseServer do
   end
 
   def handle_call({:get_expense_by_id, user_id, expense_id}, _from, %{expenses: expenses} = state) do
-    expenses = Map.get(expenses, user_id, [])
-    expense = Enum.find(expenses, fn expense -> expense.id == expense_id end)
+    expense = get_expense_by_user(expenses, user_id, expense_id)
 
     {:reply, {:ok, expense}, state}
   end
 
-  defp generate_date() do
-    date_today = Date.utc_today()
-    "~D[#{Date.to_string(date_today)}]"
+  defp get_expense_by_user(expenses, user_id, expense_id) do
+    expenses = Map.get(expenses, user_id, [])
+    Enum.find(expenses, fn expense -> expense.id == expense_id end)
   end
 end

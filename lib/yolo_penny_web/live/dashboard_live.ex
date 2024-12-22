@@ -1,10 +1,16 @@
 defmodule YoloPennyWeb.DashboardLive do
   alias YoloPenny.Expenses
   alias YoloPenny.Expenses.Expense
+  alias YoloPennyWeb.Endpoint
+
   use YoloPennyWeb, :live_view
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Endpoint.subscribe("expenses_#{socket.assigns.current_user.id}")
+    end
+
     {:ok, socket |> assign_expenses}
   end
 
@@ -36,12 +42,9 @@ defmodule YoloPennyWeb.DashboardLive do
     <.table id="expenses" rows={@streams.expenses}>
       <:col :let={{_id, expense}} label="Description"><%= expense.description %></:col>
       <:col :let={{_id, expense}} label="Amount"><%= expense.amount %></:col>
-      <%!-- <:col :let={{_id, expense}} label="Date"><%= expense.date %></:col> --%>
-      <:action :let={{id, expense}}>
-        <.link
-          phx-click={JS.push("delete", value: %{id: expense.id}) |> hide("##{id}")}
-          data-confirm="Are you sure?"
-        >
+      <:col :let={{_id, expense}} label="Date"><%= format_date(expense.date) %></:col>
+      <:action :let={{_id, expense}}>
+        <.link phx-click={JS.push("delete", value: %{id: expense.id})} data-confirm="Are you sure?">
           <.icon name="hero-trash-solid" class="h-4 w-4" /> Delete
         </.link>
       </:action>
@@ -54,6 +57,7 @@ defmodule YoloPennyWeb.DashboardLive do
         title={@page_title}
         action={@live_action}
         patch={~p"/dashboard"}
+        current_user={@current_user}
       />
     </.modal>
     """
@@ -75,10 +79,9 @@ defmodule YoloPennyWeb.DashboardLive do
   def handle_event("delete", %{"id" => id}, socket) do
     user_id = socket.assigns.current_user.id
 
-    {:ok, expense} = Expenses.get_expense_by_user(user_id, id)
     {:ok, _} = Expenses.delete_expense_by_user(user_id, id)
 
-    {:noreply, stream_delete(socket, :expenses, expense)}
+    {:noreply, socket}
   end
 
   @impl true
@@ -86,10 +89,24 @@ defmodule YoloPennyWeb.DashboardLive do
     {:noreply, push_patch(socket, to: ~p"/dashboard/new-expense")}
   end
 
+  @impl true
+  def handle_info(%{event: "expense_created", payload: expense}, socket) do
+    {:noreply, stream_insert(socket, :expenses, expense, at: 0)}
+  end
+
+  @impl true
+  def handle_info(%{event: "expense_deleted", payload: expense}, socket) do
+    {:noreply, stream_delete(socket, :expenses, expense)}
+  end
+
   def assign_expenses(socket) do
     user_id = socket.assigns.current_user.id
     {:ok, expenses} = Expenses.get_expenses_by_user(user_id)
 
     stream(socket, :expenses, expenses)
+  end
+
+  defp format_date(date) do
+    "#{date.day}/#{date.month}/#{date.year}"
   end
 end
