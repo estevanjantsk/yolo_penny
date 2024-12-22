@@ -56,11 +56,41 @@ Good luck! We look forward to seeing your solution.
 
 ### TODO
 - [x] Add CI Pipeline
-- [ ] Users Authentication
-- [ ] Expense Management
-- [ ] Cover with tests
+- [x] Users Authentication
+- [x] Expense Management
+- [x] Realtime updates
+- [x] Cover with tests
 
-## GitHub Actions Workflow for Elixir CI
+---
+
+## How to run
+
+To start your Phoenix server:
+
+  * Run `mix setup` to install and setup dependencies
+  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+Main endpoints:
+
+sign in: ``localhost:4000/users/log_in`
+
+sign up: `localhost:4000/users/register"`
+
+dashboard: `localhost:4000/dashboard`
+
+new expense: `localhost:4000/dashboard/new-expense`
+
+## Solution Overview
+Using a GenServer for managing user data and expense management in memory is a suitable choice for the following reasons:
+
+- **Concurrent Data Management**: GenServers can handle state and perform operations concurrently, making them ideal for managing user-specific data in a real-time application.
+- **Real-Time Updates**: Since Phoenix LiveView works with real-time WebSocket connections, a GenServer can notify connected processes (tabs) of any state changes, ensuring synchronization.
+- **Isolation of Data:**: By structuring the state to associate expenses with specific users, we ensure data integrity and security—each user only accesses their own data.
+- **In-Memory Speed**: As there's no database involved, a GenServer provides quick access to state stored in memory.
+
+### GitHub Actions Workflow for Elixir CI
 
 The GitHub Actions workflow I added is designed to automate the Continuous Integration (CI) process for an Elixir project. It includes several jobs to ensure code quality, security, and correctness.
 
@@ -132,4 +162,6 @@ The GitHub Actions workflow I added is designed to automate the Continuous Integ
 - **Dependencies Cache**: Caches the `_build` and `deps` directories to speed up subsequent runs.
 - **PLT Cache**: Caches the Dialyzer PLTs to avoid rebuilding them every time.
 
-This workflow ensures that your Elixir project is consistently checked for code quality, security, and correctness on every pull request.
+### Tests
+
+For the tests, I focused on the 80/20 rule, prioritizing the most critical areas. Specifically, I covered both GenServers (Users and Expenses), the entire user authentication process, and in LiveView, I tested a complete flow—from creating and listing an expense to deleting it.
