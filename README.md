@@ -94,6 +94,8 @@ Using a GenServer for managing user data and expense management in memory is a s
 
 The GitHub Actions workflow I added is designed to automate the Continuous Integration (CI) process for an Elixir project. It includes several jobs to ensure code quality, security, and correctness.
 
+<img width="1413" alt="image" src="https://github.com/user-attachments/assets/a8ed86e0-9bbb-47bb-8ddd-f05093d5e24b" />
+
 ### Workflow Overview
 
 - **Trigger**: The workflow is triggered on pull requests to the `main` branch.
