@@ -4,6 +4,7 @@ defmodule YoloPennyWeb.DashboardLive.FormComponent do
   alias YoloPenny.Expenses
   alias YoloPenny.Expenses.Expense
 
+  @impl true
   def update(assigns, socket) do
     {:ok,
      socket
@@ -11,6 +12,7 @@ defmodule YoloPennyWeb.DashboardLive.FormComponent do
      |> clear_form()}
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>

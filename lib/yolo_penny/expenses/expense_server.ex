@@ -3,6 +3,8 @@ defmodule YoloPenny.Expenses.ExpenseServer do
   This module provides a GenServer for managing user's expenses.
   """
 
+  import Ecto.UUID, only: [generate: 0]
+
   use GenServer
 
   # Public API
@@ -38,6 +40,16 @@ defmodule YoloPenny.Expenses.ExpenseServer do
   end
 
   def handle_call({:add_expense, user_id, expense}, _from, %{expenses: expenses} = state) do
+    id = generate()
+
+    expense = %{expense | id: id}
+
+    expense =
+      case Map.get(expense, :date) do
+        nil -> Map.put(expense, :date, generate_date())
+        _ -> expense
+      end
+
     updated_expenses =
       expenses
       |> Map.update(user_id, [expense], fn existing -> [expense | existing] end)
@@ -74,5 +86,10 @@ defmodule YoloPenny.Expenses.ExpenseServer do
     expense = Enum.find(expenses, fn expense -> expense.id == expense_id end)
 
     {:reply, {:ok, expense}, state}
+  end
+
+  defp generate_date() do
+    date_today = Date.utc_today()
+    "~D[#{Date.to_string(date_today)}]"
   end
 end
