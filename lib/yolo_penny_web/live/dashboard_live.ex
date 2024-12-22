@@ -11,7 +11,7 @@ defmodule YoloPennyWeb.DashboardLive do
       Endpoint.subscribe("expenses_#{socket.assigns.current_user.id}")
     end
 
-    {:ok, socket |> assign_expenses}
+    {:ok, socket |> assign_expenses |> assign_total}
   end
 
   @impl true
@@ -36,7 +36,7 @@ defmodule YoloPennyWeb.DashboardLive do
     </.title_bar>
 
     <div class="bg-gray-200 text-gray-700 p-2 mt-2">
-      Total: 100
+      Total: <%= @total %>
     </div>
 
     <.table id="expenses" rows={@streams.expenses}>
@@ -91,12 +91,12 @@ defmodule YoloPennyWeb.DashboardLive do
 
   @impl true
   def handle_info(%{event: "expense_created", payload: expense}, socket) do
-    {:noreply, stream_insert(socket, :expenses, expense, at: 0)}
+    {:noreply, stream_insert(socket, :expenses, expense, at: 0) |> assign_total}
   end
 
   @impl true
   def handle_info(%{event: "expense_deleted", payload: expense}, socket) do
-    {:noreply, stream_delete(socket, :expenses, expense)}
+    {:noreply, stream_delete(socket, :expenses, expense) |> assign_total}
   end
 
   def assign_expenses(socket) do
@@ -104,6 +104,13 @@ defmodule YoloPennyWeb.DashboardLive do
     {:ok, expenses} = Expenses.get_expenses_by_user(user_id)
 
     stream(socket, :expenses, expenses)
+  end
+
+  def assign_total(socket) do
+    user_id = socket.assigns.current_user.id
+    {:ok, total} = Expenses.get_total_by_user(user_id)
+
+    assign(socket, total: total)
   end
 
   defp format_date(date) do

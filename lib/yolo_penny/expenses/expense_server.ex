@@ -5,6 +5,7 @@ defmodule YoloPenny.Expenses.ExpenseServer do
 
   import Ecto.UUID, only: [generate: 0]
 
+  alias Mix.Tasks.Phx.Gen
   alias YoloPennyWeb.Endpoint
 
   use GenServer
@@ -27,6 +28,10 @@ defmodule YoloPenny.Expenses.ExpenseServer do
     GenServer.call(__MODULE__, {:get_expense_by_id, user_id, expense_id})
   end
 
+  def get_total_by_user(user_id) do
+    GenServer.call(__MODULE__, {:get_total_by_user, user_id})
+  end
+
   def delete_expense(user_id, expense_id) do
     GenServer.call(__MODULE__, {:delete_expense, user_id, expense_id})
   end
@@ -43,8 +48,6 @@ defmodule YoloPenny.Expenses.ExpenseServer do
 
   def handle_call({:add_expense, user_id, expense}, _from, %{expenses: expenses} = state) do
     expense = Map.put(expense, :id, generate())
-
-    dbg(expense)
 
     expense =
       case Map.get(expense, :date) do
@@ -93,6 +96,13 @@ defmodule YoloPenny.Expenses.ExpenseServer do
     expense = get_expense_by_user(expenses, user_id, expense_id)
 
     {:reply, {:ok, expense}, state}
+  end
+
+  def handle_call({:get_total_by_user, user_id}, _from, %{expenses: expenses} = state) do
+    expenses = Map.get(expenses, user_id, [])
+    total = Enum.reduce(expenses, 0, fn expense, acc -> acc + expense.amount end)
+
+    {:reply, {:ok, total}, state}
   end
 
   defp get_expense_by_user(expenses, user_id, expense_id) do

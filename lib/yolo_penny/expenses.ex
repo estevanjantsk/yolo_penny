@@ -12,6 +12,8 @@ defmodule YoloPenny.Expenses do
   def get_expense_by_user(user_id, expense_id),
     do: ExpenseServer.get_expense_by_id(user_id, expense_id)
 
+  def get_total_by_user(user_id), do: ExpenseServer.get_total_by_user(user_id)
+
   def get_expenses_by_user(user_id), do: ExpenseServer.get_expenses(user_id)
 
   def delete_expense_by_user(user_id, expense_id),
