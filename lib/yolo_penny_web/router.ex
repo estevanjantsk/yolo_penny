@@ -34,7 +34,8 @@ defmodule YoloPennyWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{YoloPennyWeb.UserAuth, :ensure_authenticated}] do
-      live "/dashboard", DashboardLive, :new
+      live "/dashboard", DashboardLive, :index
+      live "/dashboard/new-expense", DashboardLive, :new
     end
   end
 

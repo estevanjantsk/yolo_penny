@@ -17,7 +17,8 @@ defmodule YoloPenny.Application do
       # {YoloPenny.Worker, arg},
       # Start to serve requests, typically the last entry
       YoloPennyWeb.Endpoint,
-      {YoloPenny.Users.UserServer, []}
+      {YoloPenny.Users.UserServer, []},
+      {YoloPenny.Expenses.ExpenseServer, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
