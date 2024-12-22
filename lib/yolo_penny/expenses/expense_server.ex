@@ -5,7 +5,6 @@ defmodule YoloPenny.Expenses.ExpenseServer do
 
   import Ecto.UUID, only: [generate: 0]
 
-  alias Mix.Tasks.Phx.Gen
   alias YoloPennyWeb.Endpoint
 
   use GenServer
