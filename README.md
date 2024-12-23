@@ -65,9 +65,14 @@ Good luck! We look forward to seeing your solution.
 
 ## How to run
 
-To start your Phoenix server:
+If you have `docker compose`:
 
-Since the solution does not require any database and should be straightforward I decided to not create a Docker/docker-compose to run the project. A simple mix setup mix phx.server should do the job.
+Just run `docker compose up` and you will have access to the app on port: [`localhost:4444`](http://localhost:4444).
+
+OR
+
+
+You can run your Phoenix server on your machine:
 
 I used:
   - `ELIXIR`: Set to `1.16.1`.
@@ -80,7 +85,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Main endpoints:
 
-sign in: ``localhost:4000/users/log_in`
+sign in: `localhost:4000/users/log_in`
 
 sign up: `localhost:4000/users/register"`
 
